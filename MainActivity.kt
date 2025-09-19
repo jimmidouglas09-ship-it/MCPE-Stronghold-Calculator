@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.widget.*
 import android.content.Context
+import android.graphics.Color
 import kotlin.math.*
 
 class MainActivity : Activity() {
@@ -23,6 +24,15 @@ class MainActivity : Activity() {
 
     private val strongholdCalculator = StrongholdCalculator()
     private val OVERLAY_PERMISSION_REQ_CODE = 1234
+
+    // Dark theme colors
+    private val BACKGROUND_COLOR = Color.parseColor("#1E1E1E")
+    private val SURFACE_COLOR = Color.parseColor("#2D2D2D")
+    private val PRIMARY_COLOR = Color.parseColor("#4CAF50")
+    private val PRIMARY_DARK = Color.parseColor("#388E3C")
+    private val TEXT_PRIMARY = Color.parseColor("#FFFFFF")
+    private val TEXT_SECONDARY = Color.parseColor("#B0B0B0")
+    private val HINT_COLOR = Color.parseColor("#757575")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,14 +55,18 @@ class MainActivity : Activity() {
 
     private fun createLayout() {
         val scrollView = ScrollView(this)
+        scrollView.setBackgroundColor(BACKGROUND_COLOR)
+
         val mainLayout = LinearLayout(this)
         mainLayout.orientation = LinearLayout.VERTICAL
         mainLayout.setPadding(32, 32, 32, 32)
+        mainLayout.setBackgroundColor(BACKGROUND_COLOR)
 
         // Title
         val titleView = TextView(this)
         titleView.text = "Minecraft Stronghold Calculator"
         titleView.textSize = 24f
+        titleView.setTextColor(TEXT_PRIMARY)
         titleView.gravity = android.view.Gravity.CENTER
         titleView.setPadding(0, 0, 0, 32)
         mainLayout.addView(titleView)
@@ -61,8 +75,8 @@ class MainActivity : Activity() {
         btnStartOverlay = Button(this)
         btnStartOverlay.text = "Start Speedrun Overlay"
         btnStartOverlay.textSize = 18f
-        btnStartOverlay.setBackgroundColor(android.graphics.Color.parseColor("#4CAF50"))
-        btnStartOverlay.setTextColor(android.graphics.Color.WHITE)
+        btnStartOverlay.setBackgroundColor(PRIMARY_COLOR)
+        btnStartOverlay.setTextColor(Color.WHITE)
         val overlayBtnParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
@@ -76,6 +90,7 @@ class MainActivity : Activity() {
         separator.text = "── OR USE TRADITIONAL MODE ──"
         separator.gravity = android.view.Gravity.CENTER
         separator.textSize = 12f
+        separator.setTextColor(TEXT_SECONDARY)
         separator.setPadding(0, 16, 0, 32)
         mainLayout.addView(separator)
 
@@ -83,6 +98,7 @@ class MainActivity : Activity() {
         val firstPosLabel = TextView(this)
         firstPosLabel.text = "First Position"
         firstPosLabel.textSize = 18f
+        firstPosLabel.setTextColor(TEXT_PRIMARY)
         firstPosLabel.setTypeface(null, android.graphics.Typeface.BOLD)
         firstPosLabel.setPadding(0, 0, 0, 16)
         mainLayout.addView(firstPosLabel)
@@ -90,20 +106,12 @@ class MainActivity : Activity() {
         val firstRow = LinearLayout(this)
         firstRow.orientation = LinearLayout.HORIZONTAL
 
-        etPlayerX1 = EditText(this)
-        etPlayerX1.hint = "X coordinate"
-        etPlayerX1.inputType = android.text.InputType.TYPE_CLASS_NUMBER or
-                android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL or
-                android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
+        etPlayerX1 = createDarkEditText("X coordinate")
         val x1Params = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         x1Params.setMargins(0, 0, 16, 0)
         etPlayerX1.layoutParams = x1Params
 
-        etPlayerZ1 = EditText(this)
-        etPlayerZ1.hint = "Z coordinate"
-        etPlayerZ1.inputType = android.text.InputType.TYPE_CLASS_NUMBER or
-                android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL or
-                android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
+        etPlayerZ1 = createDarkEditText("Z coordinate")
         etPlayerZ1.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
 
         firstRow.addView(etPlayerX1)
@@ -114,6 +122,7 @@ class MainActivity : Activity() {
         val secondPosLabel = TextView(this)
         secondPosLabel.text = "Second Position"
         secondPosLabel.textSize = 18f
+        secondPosLabel.setTextColor(TEXT_PRIMARY)
         secondPosLabel.setTypeface(null, android.graphics.Typeface.BOLD)
         secondPosLabel.setPadding(0, 32, 0, 16)
         mainLayout.addView(secondPosLabel)
@@ -121,20 +130,12 @@ class MainActivity : Activity() {
         val secondRow = LinearLayout(this)
         secondRow.orientation = LinearLayout.HORIZONTAL
 
-        etPlayerX2 = EditText(this)
-        etPlayerX2.hint = "X coordinate"
-        etPlayerX2.inputType = android.text.InputType.TYPE_CLASS_NUMBER or
-                android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL or
-                android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
+        etPlayerX2 = createDarkEditText("X coordinate")
         val x2Params = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
         x2Params.setMargins(0, 0, 16, 0)
         etPlayerX2.layoutParams = x2Params
 
-        etPlayerZ2 = EditText(this)
-        etPlayerZ2.hint = "Z coordinate"
-        etPlayerZ2.inputType = android.text.InputType.TYPE_CLASS_NUMBER or
-                android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL or
-                android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
+        etPlayerZ2 = createDarkEditText("Z coordinate")
         etPlayerZ2.layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
 
         secondRow.addView(etPlayerX2)
@@ -145,11 +146,11 @@ class MainActivity : Activity() {
         val pixelLabel = TextView(this)
         pixelLabel.text = "Pixel Change (Optional - for distance calculation)"
         pixelLabel.textSize = 14f
+        pixelLabel.setTextColor(TEXT_SECONDARY)
         pixelLabel.setPadding(0, 32, 0, 8)
         mainLayout.addView(pixelLabel)
 
-        etPixelChange = EditText(this)
-        etPixelChange.hint = "Pixel change (leave empty for coordinate-only calculation)"
+        etPixelChange = createDarkEditText("Pixel change (leave empty for coordinate-only calculation)")
         etPixelChange.inputType = android.text.InputType.TYPE_CLASS_NUMBER or
                 android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
         val pixelParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
@@ -161,6 +162,8 @@ class MainActivity : Activity() {
         btnCalculate = Button(this)
         btnCalculate.text = "Calculate Stronghold Location"
         btnCalculate.textSize = 16f
+        btnCalculate.setBackgroundColor(PRIMARY_DARK)
+        btnCalculate.setTextColor(Color.WHITE)
         val btnParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         btnParams.setMargins(0, 0, 0, 32)
         btnCalculate.layoutParams = btnParams
@@ -169,8 +172,8 @@ class MainActivity : Activity() {
         // Results
         tvResults = TextView(this)
         tvResults.text = "For speedrunning: Use the 'Start Speedrun Overlay' button above!\n\nOr enter two coordinates below and tap Calculate for traditional mode.\nPixel change is optional - leave empty for coordinate-only calculation."
-        tvResults.setBackgroundColor(android.graphics.Color.BLACK)
-        tvResults.setTextColor(android.graphics.Color.WHITE)
+        tvResults.setBackgroundColor(SURFACE_COLOR)
+        tvResults.setTextColor(TEXT_PRIMARY)
         tvResults.setPadding(24, 24, 24, 24)
         tvResults.typeface = android.graphics.Typeface.MONOSPACE
         tvResults.textSize = 12f
@@ -178,6 +181,19 @@ class MainActivity : Activity() {
 
         scrollView.addView(mainLayout)
         setContentView(scrollView)
+    }
+
+    private fun createDarkEditText(hintText: String): EditText {
+        val editText = EditText(this)
+        editText.hint = hintText
+        editText.setTextColor(TEXT_PRIMARY)
+        editText.setHintTextColor(HINT_COLOR)
+        editText.setBackgroundColor(SURFACE_COLOR)
+        editText.setPadding(16, 16, 16, 16)
+        editText.inputType = android.text.InputType.TYPE_CLASS_NUMBER or
+                android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL or
+                android.text.InputType.TYPE_NUMBER_FLAG_SIGNED
+        return editText
     }
 
     private fun canDrawOverlays(): Boolean {
