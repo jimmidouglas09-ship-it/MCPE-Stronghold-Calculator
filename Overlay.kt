@@ -76,8 +76,8 @@ class OverlayService : Service() {
             orientation = LinearLayout.VERTICAL
             background = ContextCompat.getDrawable(this@OverlayService, android.R.drawable.dialog_holo_dark_frame)
             alpha = 0.95f
-            setPadding(30, 30, 30, 30)
-            minimumWidth = 500
+            setPadding(25, 25, 25, 25)
+            minimumWidth = 450
         }
 
         // Toggle button (always visible)
@@ -95,9 +95,9 @@ class OverlayService : Service() {
         expandedLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             visibility = View.GONE
-            setPadding(25, 25, 25, 25)
+            setPadding(20, 20, 20, 20)
             background = ContextCompat.getDrawable(this@OverlayService, android.R.drawable.dialog_holo_dark_frame)
-            minimumWidth = 470
+            minimumWidth = 420
         }
 
         // Close button (red and prominent)
@@ -118,6 +118,14 @@ class OverlayService : Service() {
         }
         expandedLayout.addView(btnClose)
 
+        // Title
+        val title = TextView(this).apply {
+            textSize = 1f
+            setTextColor(android.graphics.Color.WHITE)
+            gravity = Gravity.CENTER
+            setPadding(0, 0, 0, 15)
+        }
+        expandedLayout.addView(title)
 
         // First position
         val pos1Label = TextView(this).apply {
@@ -169,24 +177,23 @@ class OverlayService : Service() {
         etPixelChange = createCompactEditText("Pixel Δ", isFullWidth = true)
         etPixelChange.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
-            80
+            70
         ).apply {
-            bottomMargin = 20
+            bottomMargin = 15
         }
         expandedLayout.addView(etPixelChange)
 
         // Calculate button
         btnCalculate = Button(this).apply {
-            text = "CALCULATE STRONGHOLD"
-            textSize = 18f
+            text = "Calculate Stronghold"
+            textSize = 16f
             setBackgroundColor(android.graphics.Color.parseColor("#4CAF50"))
             setTextColor(android.graphics.Color.WHITE)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                100
+                80
             ).apply {
-                topMargin = 25
-                bottomMargin = 15
+                topMargin = 20
             }
             setOnClickListener {
                 android.util.Log.d("StrongholdCalc", "Calculate button clicked!")
@@ -219,15 +226,15 @@ class OverlayService : Service() {
     private fun createCompactEditText(hint: String, isFullWidth: Boolean = false): EditText {
         return EditText(this).apply {
             this.hint = hint
-            textSize = 15f
-            setPadding(18, 15, 18, 15)
+            textSize = 14f
+            setPadding(15, 12, 15, 12)
             layoutParams = if (isFullWidth) {
-                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 80).apply {
-                    bottomMargin = 15
+                LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 70).apply {
+                    bottomMargin = 10
                 }
             } else {
-                LinearLayout.LayoutParams(180, 80).apply {
-                    marginEnd = 20
+                LinearLayout.LayoutParams(160, 70).apply {
+                    marginEnd = 15
                 }
             }
             inputType = android.text.InputType.TYPE_CLASS_NUMBER or
@@ -284,8 +291,8 @@ class OverlayService : Service() {
         // Update window size
         overlayView?.let { view ->
             val params = view.layoutParams as WindowManager.LayoutParams
-            params.width = WindowManager.LayoutParams.WRAP_CONTENT
-            params.height = WindowManager.LayoutParams.WRAP_CONTENT
+            params.width = 450
+            params.height = 900
             windowManager.updateViewLayout(view, params)
         }
     }
