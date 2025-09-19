@@ -74,10 +74,9 @@ class OverlayService : Service() {
         val inflater = LayoutInflater.from(this)
         val view = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
-            background = ContextCompat.getDrawable(this@OverlayService, android.R.drawable.dialog_holo_dark_frame)
-            alpha = 0.95f
-            setPadding(25, 25, 25, 25)
-            minimumWidth = 450
+            setBackgroundColor(android.graphics.Color.TRANSPARENT)  // no background initially
+            setPadding(0, 0, 0, 0)  // no padding initially
+            minimumWidth = 0
         }
 
         // Toggle button (always visible)
@@ -97,7 +96,7 @@ class OverlayService : Service() {
             visibility = View.GONE
             setPadding(20, 20, 20, 20)
             background = ContextCompat.getDrawable(this@OverlayService, android.R.drawable.dialog_holo_dark_frame)
-            minimumWidth = 420
+
         }
 
         // Close button (red and prominent)
@@ -266,26 +265,21 @@ class OverlayService : Service() {
             btnToggle.text = "−"
             btnToggle.alpha = 1.0f
 
-            // Make overlay focusable when expanded so keyboard can work
-            overlayView?.let { view ->
-                val params = view.layoutParams as WindowManager.LayoutParams
-                params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                windowManager.updateViewLayout(view, params)
+            overlayView?.apply {
+                setBackground(ContextCompat.getDrawable(this@OverlayService, android.R.drawable.dialog_holo_dark_frame))
+                setPadding(25, 25, 25, 25)
             }
+
         } else {
             expandedLayout.visibility = View.GONE
             btnToggle.text = "SH"
             btnToggle.alpha = 0.8f
 
-            // Make overlay not focusable when collapsed
-            overlayView?.let { view ->
-                val params = view.layoutParams as WindowManager.LayoutParams
-                params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                windowManager.updateViewLayout(view, params)
+            overlayView?.apply {
+                setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                setPadding(0, 0, 0, 0)
             }
+
         }
 
         // Update window size
