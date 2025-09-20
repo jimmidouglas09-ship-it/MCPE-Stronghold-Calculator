@@ -270,6 +270,16 @@ class OverlayService : Service() {
                 setPadding(25, 25, 25, 25)
             }
 
+            // Update window parameters for expanded state
+            overlayView?.let { view ->
+                val params = view.layoutParams as WindowManager.LayoutParams
+                params.width = 450
+                params.height = 900
+                params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                windowManager.updateViewLayout(view, params)
+            }
+
         } else {
             expandedLayout.visibility = View.GONE
             btnToggle.text = "SH"
@@ -280,14 +290,16 @@ class OverlayService : Service() {
                 setPadding(0, 0, 0, 0)
             }
 
-        }
-
-        // Update window size
-        overlayView?.let { view ->
-            val params = view.layoutParams as WindowManager.LayoutParams
-            params.width = 450
-            params.height = 900
-            windowManager.updateViewLayout(view, params)
+            // Update window parameters for collapsed state - allow clicks to pass through
+            overlayView?.let { view ->
+                val params = view.layoutParams as WindowManager.LayoutParams
+                params.width = WindowManager.LayoutParams.WRAP_CONTENT
+                params.height = WindowManager.LayoutParams.WRAP_CONTENT
+                params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                windowManager.updateViewLayout(view, params)
+            }
         }
     }
 
@@ -297,7 +309,7 @@ class OverlayService : Service() {
         var initialTouchX = 0f
         var initialTouchY = 0f
 
-        view.setOnTouchListener { _, event ->
+        btnToggle.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     initialX = params.x
@@ -339,13 +351,12 @@ class OverlayService : Service() {
 
             val result = try {
                 if (pixelChange != null && pixelChange > 0) {
-                    strongholdCalculator.calculateStrongholdWithDistance(x2, z2, x1, z1, 3655.0 / pixelChange)
+                    strongholdCalculator.calculateStrongholdWithDistance(x1, z1, x2, z2, 3655.0 / pixelChange)
                 } else {
                     strongholdCalculator.calculateStrongholdFromCoordinates(x1, z1, x2, z2)
                 }
             } catch (e: Exception) {
                 android.util.Log.e("StrongholdCalc", "Calculator error: ${e.message}", e)
-                // Show a simple test result to verify display works
                 showError("Calculator Error: ${e.message}")
                 return
             }
