@@ -253,10 +253,10 @@ class MainActivity : Activity() {
             }
 
             val result = if (pixelChange != null && pixelChange > 0) {
-                // Use pixel change method - calculate distance from second position
+                // Use pixel change method - FIXED: correct parameter order
                 val distance = 3655.0 / pixelChange
                 strongholdCalculator.calculateStrongholdWithDistance(
-                    playerX2, playerZ2, playerX1, playerZ1, distance
+                    playerX1, playerZ1, playerX2, playerZ2, distance
                 )
             } else {
                 // Use coordinate-only method
